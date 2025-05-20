@@ -2,46 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kursovaya_notebook/feature/dashboard/bloc/dashboard_cubit.dart';
 
-class AddFolderDialog extends StatelessWidget {
+class AddFolderDialog extends StatefulWidget {
   const AddFolderDialog({super.key});
 
   @override
+  _AddFolderDialogState createState() => _AddFolderDialogState();
+}
+
+class _AddFolderDialogState extends State<AddFolderDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
-    
     return AlertDialog(
-      title: const Text('Новая папка'),
-      content: TextField(
-        controller: controller,
-        decoration: const InputDecoration(
-          hintText: 'Введите название папки',
-          border: OutlineInputBorder(),
+      title: const Text('Добавить папку'),
+      content: Form(
+        key: _formKey,
+        child: TextFormField(
+          controller: _nameController,
+          decoration: const InputDecoration(
+            labelText: 'Название папки',
+            border: OutlineInputBorder(),
+          ),
+          validator:
+              (value) =>
+                  value?.isEmpty ?? true ? 'Введите название папки' : null,
         ),
-        autofocus: true,
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: const Text('Отмена'),
         ),
-        TextButton(
+        ElevatedButton(
           onPressed: () {
-            final folderName = controller.text.trim();
-            if (folderName.isNotEmpty) {
-              context.read<DashboardCubit>().addFolder(folderName);
+            if (_formKey.currentState!.validate()) {
+              context.read<DashboardCubit>().addFolder(_nameController.text);
               Navigator.pop(context);
             }
           },
-          child: const Text('Создать'),
+          child: const Text('Добавить'),
         ),
       ],
-    );
-  }
-
-  static Future<void> show(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (context) => const AddFolderDialog(),
     );
   }
 }

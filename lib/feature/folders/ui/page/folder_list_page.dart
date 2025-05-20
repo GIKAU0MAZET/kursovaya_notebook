@@ -22,8 +22,8 @@ class FoldersListScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         itemCount: folders.length,
         itemBuilder: (context, index) {
-          final folderId = '${index + 1}';
-          final subjects = subjectsCubit.state.foldersSubjects[folderId] ?? [];
+          final folder = folders[index];
+          final subjects = subjectsCubit.state.foldersSubjects[folder.id] ?? [];
 
           return Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -31,13 +31,13 @@ class FoldersListScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Theme(
-              data: Theme.of(context).copyWith(
-                dividerColor: Colors.transparent, // Убираем разделитель
-              ),
+              data: Theme.of(
+                context,
+              ).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
                 tilePadding: const EdgeInsets.symmetric(horizontal: 16),
                 title: Text(
-                  'Папка $folderId',
+                  folder.name, // Используем имя папки из модели
                   style: const TextStyle(fontSize: 18),
                 ),
                 children: [
@@ -64,7 +64,7 @@ class FoldersListScreen extends StatelessWidget {
                               child: InkWell(
                                 onTap:
                                     () => context.push(
-                                      '${FoldersListScreen.path}/$folderId/subjects/${subjects.indexOf(subject)}',
+                                      '${FoldersListScreen.path}/${folder.id}/subjects/${subjects.indexOf(subject)}',
                                     ),
                                 borderRadius: BorderRadius.circular(8),
                                 child: Container(
@@ -89,7 +89,7 @@ class FoldersListScreen extends StatelessWidget {
                             ),
                           ),
                         const SizedBox(height: 8),
-                        _AddSubjectButton(folderId: folderId),
+                        _AddSubjectButton(folderId: folder.id),
                       ],
                     ),
                   ),

@@ -1,9 +1,11 @@
+import 'package:kursovaya_notebook/feature/folders/data/model/folder_model.dart';
+
 class DashboardState {
-  final List<String> folders;
+  final List<Folder> folders;
 
-  DashboardState({this.folders = const ['1 Курс', '2 Курс']});
+  DashboardState({required this.folders});
 
-  DashboardState copyWith({List<String>? folders}) {
+  DashboardState copyWith({List<Folder>? folders}) {
     return DashboardState(folders: folders ?? this.folders);
   }
 }
