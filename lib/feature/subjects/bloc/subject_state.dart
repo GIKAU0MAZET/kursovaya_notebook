@@ -1,8 +1,11 @@
+import 'package:kursovaya_notebook/feature/subjects/data/model/subject_model.dart';
+
 class SubjectState {
-  final Map<String, List<String>> foldersSubjects;
+  final Map<String, List<Subject>> foldersSubjects;
   final bool isLoading;
   final String? error;
-  List<String> getSubjectsByFolder(String folderId) {
+
+  List<Subject> getSubjectsByFolder(String folderId) {
     return foldersSubjects[folderId] ?? [];
   }
 
@@ -13,7 +16,7 @@ class SubjectState {
   });
 
   SubjectState copyWith({
-    Map<String, List<String>>? foldersSubjects,
+    Map<String, List<Subject>>? foldersSubjects,
     bool? isLoading,
     String? error,
   }) {

@@ -12,32 +12,37 @@ class FolderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subjects = context.watch<SubjectCubit>().state.foldersSubjects[folderId] ?? [];
+    final subjects =
+        context.watch<SubjectCubit>().state.foldersSubjects[folderId] ?? [];
 
     return Scaffold(
       appBar: AppBar(title: Text('Папка $folderId')),
-      body: subjects.isEmpty
-          ? const Center(child: Text('Пока нет предметов'))
-          : ListView.separated(
-              padding: const EdgeInsets.all(16),
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemCount: subjects.length,
-              itemBuilder: (context, index) => Card(
-                elevation: 2,
-                child: ListTile(
-                  title: Text(subjects[index]),
-                  onTap: () => context.push(
-                    '${FoldersListScreen.path}/$folderId/subjects/$index',
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                ),
+      body:
+          subjects.isEmpty
+              ? const Center(child: Text('Пока нет предметов'))
+              : ListView.separated(
+                padding: const EdgeInsets.all(16),
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemCount: subjects.length,
+                itemBuilder:
+                    (context, index) => Card(
+                      elevation: 2,
+                      child: ListTile(
+                        title: Text(subjects[index].name),
+                        onTap:
+                            () => context.push(
+                              '${FoldersListScreen.path}/$folderId/subjects/$index',
+                            ),
+                        trailing: const Icon(Icons.chevron_right),
+                      ),
+                    ),
               ),
-            ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showDialog(
-          context: context,
-          builder: (_) => AddSubjectDialog(folderId: folderId),
-        ),
+        onPressed:
+            () => showDialog(
+              context: context,
+              builder: (_) => AddSubjectDialog(folderId: folderId),
+            ),
         child: const Icon(Icons.add),
       ),
     );
