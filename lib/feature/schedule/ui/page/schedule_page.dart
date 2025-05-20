@@ -130,7 +130,7 @@ class _PairSlot extends StatelessWidget {
         children: [
           // Блок с номером пары и временем
           SizedBox(
-            width: 100,
+            width: 70,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -156,7 +156,7 @@ class _PairSlot extends StatelessWidget {
               children: [
                 ...events.map(
                   (event) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.only(bottom: 4),
                     child: _EventItem(
                       event: event,
                       onRemove:
@@ -184,7 +184,6 @@ class _EventItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 4),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(8),
