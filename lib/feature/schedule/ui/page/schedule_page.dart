@@ -1,4 +1,3 @@
-// schedule_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kursovaya_notebook/feature/schedule/bloc/schedule_cubit.dart';
@@ -67,6 +66,9 @@ class _DaySchedule extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final existingPairs = events.map((e) => e.pairNumber).toSet().toList();
+    existingPairs.sort();
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
@@ -74,26 +76,29 @@ class _DaySchedule extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              dayName,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  dayName,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                _AddPairButton(dayNumber: dayNumber, pairTimes: pairTimes),
+              ],
             ),
             const Divider(),
-            ...pairTimes.asMap().entries.map((entry) {
-              final pairNumber = entry.key + 1;
-              final time = entry.value;
-              final ScheduleEvent? event = events
-                  .cast<ScheduleEvent?>()
-                  .firstWhere(
-                    (e) => e?.pairNumber == pairNumber,
-                    orElse: () => null,
-                  );
-
+            ...existingPairs.map((pairNumber) {
+              final time = pairTimes[pairNumber - 1];
+              final pairEvents =
+                  events.where((e) => e.pairNumber == pairNumber).toList();
               return _PairSlot(
                 dayNumber: dayNumber,
                 pairNumber: pairNumber,
                 time: time,
-                event: event,
+                events: pairEvents,
               );
             }),
           ],
@@ -107,13 +112,13 @@ class _PairSlot extends StatelessWidget {
   final int dayNumber;
   final int pairNumber;
   final TimeOfDay time;
-  final ScheduleEvent? event;
+  final List<ScheduleEvent> events;
 
   const _PairSlot({
     required this.dayNumber,
     required this.pairNumber,
     required this.time,
-    this.event,
+    required this.events,
   });
 
   @override
@@ -121,20 +126,48 @@ class _PairSlot extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Блок с номером пары и временем
           SizedBox(
-            width: 70,
-            child: Text(
-              '${pairNumber} пара\n${time.format(context)}',
-              style: const TextStyle(fontSize: 12),
+            width: 100,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$pairNumber пара',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  time.format(context),
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: 16),
+
+          // Блок с предметами
           Expanded(
-            child:
-                event != null
-                    ? _EventItem(event: event!)
-                    : _AddButton(dayNumber: dayNumber, pairNumber: pairNumber),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...events.map(
+                  (event) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: _EventItem(
+                      event: event,
+                      onRemove:
+                          () => context.read<ScheduleCubit>().removeEvent(
+                            event.id,
+                          ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -144,12 +177,14 @@ class _PairSlot extends StatelessWidget {
 
 class _EventItem extends StatelessWidget {
   final ScheduleEvent event;
+  final VoidCallback onRemove;
 
-  const _EventItem({required this.event});
+  const _EventItem({required this.event, required this.onRemove});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.only(top: 4),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(8),
@@ -157,26 +192,23 @@ class _EventItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  event.title,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                ),
-                if (event.description.isNotEmpty)
-                  Text(
-                    event.description,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                  ),
-              ],
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                event.title,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              Text(
+                event.description,
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+              ),
+            ],
           ),
+          const Spacer(),
           IconButton(
             icon: const Icon(Icons.visibility_off, size: 20),
-            onPressed:
-                () => context.read<ScheduleCubit>().removeEvent(event.id),
+            onPressed: onRemove,
           ),
         ],
       ),
@@ -184,19 +216,30 @@ class _EventItem extends StatelessWidget {
   }
 }
 
-class _AddButton extends StatelessWidget {
+class _AddPairButton extends StatelessWidget {
   final int dayNumber;
-  final int pairNumber;
+  final List<TimeOfDay> pairTimes;
 
-  const _AddButton({required this.dayNumber, required this.pairNumber});
+  const _AddPairButton({required this.dayNumber, required this.pairTimes});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => _showAddDialog(context),
-      borderRadius: BorderRadius.circular(8),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder:
+              (context) => _AddEventDialog(
+                dayNumber: dayNumber,
+                availablePairs: List.generate(7, (index) => index + 1),
+                pairTimes: pairTimes,
+              ),
+        );
+      },
       child: Container(
+        margin: const EdgeInsets.only(top: 8),
         height: 40,
+        width: 64,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(8),
@@ -206,22 +249,18 @@ class _AddButton extends StatelessWidget {
       ),
     );
   }
-
-  void _showAddDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder:
-          (context) =>
-              _AddEventDialog(dayNumber: dayNumber, pairNumber: pairNumber),
-    );
-  }
 }
 
 class _AddEventDialog extends StatefulWidget {
   final int dayNumber;
-  final int pairNumber;
+  final List<int> availablePairs;
+  final List<TimeOfDay> pairTimes;
 
-  const _AddEventDialog({required this.dayNumber, required this.pairNumber});
+  const _AddEventDialog({
+    required this.dayNumber,
+    required this.availablePairs,
+    required this.pairTimes,
+  });
 
   @override
   __AddEventDialogState createState() => __AddEventDialogState();
@@ -231,6 +270,7 @@ class __AddEventDialogState extends State<_AddEventDialog> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
+  int _selectedPairNumber = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -241,6 +281,25 @@ class __AddEventDialogState extends State<_AddEventDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            DropdownButtonFormField<int>(
+              value: _selectedPairNumber,
+              items:
+                  widget.availablePairs
+                      .map(
+                        (pairNumber) => DropdownMenuItem(
+                          value: pairNumber,
+                          child: Text('$pairNumber пара'),
+                        ),
+                      )
+                      .toList(),
+              onChanged:
+                  (value) => setState(() => _selectedPairNumber = value!),
+              decoration: const InputDecoration(
+                labelText: 'Номер пары',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
             TextFormField(
               controller: _titleController,
               decoration: const InputDecoration(
@@ -276,14 +335,7 @@ class __AddEventDialogState extends State<_AddEventDialog> {
                 title: _titleController.text,
                 description: _descController.text,
                 day: widget.dayNumber,
-                pairNumber: widget.pairNumber,
-                time: TimeOfDay(
-                  hour:
-                      8 +
-                      (widget.pairNumber - 1) ~/ 2 * 2 +
-                      (widget.pairNumber - 1) % 2 * 1,
-                  minute: (widget.pairNumber - 1) % 2 == 0 ? 0 : 45,
-                ),
+                pairNumber: _selectedPairNumber,
               );
               context.read<ScheduleCubit>().addEvent(event);
               Navigator.pop(context);
@@ -293,12 +345,5 @@ class __AddEventDialogState extends State<_AddEventDialog> {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _descController.dispose();
-    super.dispose();
   }
 }
