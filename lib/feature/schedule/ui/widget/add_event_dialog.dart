@@ -16,3 +16,5 @@ class AddEventDialog extends StatefulWidget {
   @override
   AddEventDialogState createState() => AddEventDialogState();
 }
+
+//TODO заменить на Stateless
