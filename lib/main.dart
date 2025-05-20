@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kursovaya_notebook/core/router/app_router.dart';
 import 'package:kursovaya_notebook/feature/dashboard/bloc/dashboard_cubit.dart';
+import 'package:kursovaya_notebook/feature/note/bloc/note_bloc.dart';
 import 'package:kursovaya_notebook/feature/schedule/bloc/schedule_cubit.dart';
 import 'package:kursovaya_notebook/feature/subjects/bloc/subject_cubit.dart';
 
@@ -19,6 +20,7 @@ class AppWidget extends StatelessWidget {
         DashboardCubit.provider(),
         SubjectCubit.provider(),
         ScheduleCubit.provider(),
+        NoteCubit.provider(),
       ],
       child: MaterialApp.router(
         routerConfig: AppRouter.config,

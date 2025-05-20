@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kursovaya_notebook/feature/note/bloc/note_bloc.dart';
+import 'package:kursovaya_notebook/feature/note/bloc/note_state.dart';
 import 'package:kursovaya_notebook/feature/subjects/bloc/subject_cubit.dart';
+import 'package:kursovaya_notebook/feature/subjects/ui/widget/editable_note_field.dart';
 import 'package:kursovaya_notebook/feature/subjects/ui/widget/pinned_info_card.dart';
 
 class SubjectPage extends StatelessWidget {
@@ -21,6 +24,7 @@ class SubjectPage extends StatelessWidget {
     final index = int.parse(subjectId);
     final subject = index < subjects.length ? subjects[index] : null;
     final subjectName = subject?.name ?? 'Неизвестный предмет';
+    final TextEditingController noteController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(title: Text(subjectName)),
@@ -43,7 +47,68 @@ class SubjectPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding: const EdgeInsets.all(16),
-                child: const Text('Здесь будет контент предмета...'),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: BlocBuilder<NoteCubit, NoteState>(
+                        builder: (context, state) {
+                          final notes = state.getNotesBySubject(subjectId);
+
+                          if (notes.isEmpty) {
+                            return const Text('Нет заметок по этому предмету.');
+                          }
+
+                          return ListView.builder(
+                            itemCount: notes.length,
+                            itemBuilder: (context, index) {
+                              final note = notes[index];
+                              return EditableNoteField(note: note);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: noteController,
+                            maxLines: null,
+                            minLines: 1,
+                            decoration: InputDecoration(
+                              hintText: 'Введите заметку...',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                            ),
+                            keyboardType: TextInputType.multiline,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          icon: const Icon(Icons.send, size: 28),
+                          color: Colors.white,
+                          onPressed: () {
+                            final content = noteController.text.trim();
+                            if (content.isNotEmpty) {
+                              context.read<NoteCubit>().addNote(
+                                subjectId,
+                                content,
+                              );
+                              noteController.clear();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

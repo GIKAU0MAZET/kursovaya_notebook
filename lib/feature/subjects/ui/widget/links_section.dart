@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kursovaya_notebook/feature/subjects/ui/widget/add_link_button.dart';
 import 'package:kursovaya_notebook/feature/subjects/ui/widget/link_button.dart';
+import 'package:kursovaya_notebook/feature/subjects/ui/widget/mock_links_button.dart';
 
 class LinksSection extends StatelessWidget {
   const LinksSection({super.key, required this.links});
@@ -18,6 +19,7 @@ class LinksSection extends StatelessWidget {
           spacing: 8,
           children: [
             ...links.map((link) => LinkButton(title: link)),
+            AddYandexLinkButton(),
             AddLinkButton(),
           ],
         ),
