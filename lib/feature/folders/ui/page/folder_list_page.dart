@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kursovaya_notebook/feature/dashboard/bloc/dashboard_cubit.dart';
-import 'package:kursovaya_notebook/feature/dashboard/ui/widget/add_folder_dialog.dart';
+import 'package:kursovaya_notebook/feature/folders/ui/widget/add_folder_dialog.dart';
 
 class FoldersListScreen extends StatelessWidget {
   const FoldersListScreen({super.key});

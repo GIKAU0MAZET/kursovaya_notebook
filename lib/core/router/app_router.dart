@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kursovaya_notebook/feature/dashboard/ui/page/dashboard_page.dart';
-import 'package:kursovaya_notebook/feature/dashboard/ui/page/folder_list_page.dart';
+import 'package:kursovaya_notebook/feature/folders/ui/page/folder_list_page.dart';
 import 'package:kursovaya_notebook/feature/folders/ui/page/folder_page.dart';
+import 'package:kursovaya_notebook/feature/schedule/ui/page/schedule_page.dart';
 import 'package:kursovaya_notebook/feature/subjects/ui/page/subject_page.dart';
 
 abstract final class AppRouter {
@@ -68,6 +69,18 @@ abstract final class AppRouter {
                     ],
                   ),
                 ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: SchedulePage.path,
+                pageBuilder:
+                    (context, state) => NoTransitionPage(
+                      key: state.pageKey,
+                      child: const SchedulePage(),
+                    ),
               ),
             ],
           ),

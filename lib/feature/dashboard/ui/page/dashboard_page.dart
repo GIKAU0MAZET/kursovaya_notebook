@@ -35,6 +35,10 @@ class DashboardPage extends StatelessWidget {
                 icon: const Icon(Icons.folder),
                 label: Text('Папки (${folders.length})'),
               ),
+              NavigationRailDestination(
+                icon: Icon(Icons.schedule),
+                label: Text('Расписание'),
+              ),
             ],
           ),
           Expanded(child: navigationShell),

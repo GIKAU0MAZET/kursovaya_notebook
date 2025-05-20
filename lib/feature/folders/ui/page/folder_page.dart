@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kursovaya_notebook/feature/dashboard/ui/page/folder_list_page.dart';
+import 'package:kursovaya_notebook/feature/folders/ui/page/folder_list_page.dart';
 import 'package:kursovaya_notebook/feature/subjects/bloc/subject_cubit.dart';
 import 'package:kursovaya_notebook/feature/subjects/ui/widgets/add_subject_dialog.dart';
 
