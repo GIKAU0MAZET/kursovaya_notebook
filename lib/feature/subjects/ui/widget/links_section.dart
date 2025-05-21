@@ -19,7 +19,6 @@ class LinksSection extends StatelessWidget {
           spacing: 8,
           children: [
             ...links.map((link) => LinkButton(title: link)),
-            AddYandexLinkButton(),
             AddLinkButton(),
           ],
         ),

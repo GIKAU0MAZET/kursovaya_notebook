@@ -6,10 +6,10 @@ class AddFolderDialog extends StatefulWidget {
   const AddFolderDialog({super.key});
 
   @override
-  _AddFolderDialogState createState() => _AddFolderDialogState();
+  AddFolderDialogState createState() => AddFolderDialogState();
 }
 
-class _AddFolderDialogState extends State<AddFolderDialog> {
+class AddFolderDialogState extends State<AddFolderDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
 

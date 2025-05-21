@@ -10,7 +10,7 @@ abstract final class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final config = GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: DashboardPage.path,
+    initialLocation: FoldersListScreen.path,
     debugLogDiagnostics: true,
     routes: [
       StatefulShellRoute.indexedStack(
@@ -21,18 +21,6 @@ abstract final class AppRouter {
               folders: ['1 Курс'],
             ),
         branches: [
-          // StatefulShellBranch(
-          //   routes: [
-          //     GoRoute(
-          //       path: DashboardPage.path,
-          //       pageBuilder:
-          //           (context, state) => NoTransitionPage(
-          //             key: state.pageKey,
-          //             child: const Center(child: Text('Здесь пусто')),
-          //           ),
-          //     ),
-          //   ],
-          // ),
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -43,7 +31,6 @@ abstract final class AppRouter {
                       child: const FoldersListScreen(),
                     ),
                 routes: [
-                  // Добавляем вложенный маршрут для FolderPage
                   GoRoute(
                     path: ':folderId',
                     pageBuilder:
@@ -55,7 +42,6 @@ abstract final class AppRouter {
                         ),
                     routes: [
                       GoRoute(
-                        // Добавляем вложенный маршрут для предмета
                         path: 'subjects/:subjectId',
                         pageBuilder:
                             (context, state) => NoTransitionPage(
