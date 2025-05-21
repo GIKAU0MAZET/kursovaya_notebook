@@ -27,10 +27,10 @@ class DashboardPage extends StatelessWidget {
               );
             },
             destinations: [
-              const NavigationRailDestination(
-                icon: Icon(Icons.home),
-                label: Text('Главная'),
-              ),
+              // const NavigationRailDestination(
+              //   icon: Icon(Icons.home),
+              //   label: Text('Главная'),
+              // ),
               NavigationRailDestination(
                 icon: const Icon(Icons.folder),
                 label: Text('Папки (${folders.length})'),

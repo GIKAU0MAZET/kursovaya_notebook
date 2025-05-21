@@ -21,18 +21,18 @@ abstract final class AppRouter {
               folders: ['1 Курс'],
             ),
         branches: [
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: DashboardPage.path,
-                pageBuilder:
-                    (context, state) => NoTransitionPage(
-                      key: state.pageKey,
-                      child: const Center(child: Text('Выбери папку')),
-                    ),
-              ),
-            ],
-          ),
+          // StatefulShellBranch(
+          //   routes: [
+          //     GoRoute(
+          //       path: DashboardPage.path,
+          //       pageBuilder:
+          //           (context, state) => NoTransitionPage(
+          //             key: state.pageKey,
+          //             child: const Center(child: Text('Здесь пусто')),
+          //           ),
+          //     ),
+          //   ],
+          // ),
           StatefulShellBranch(
             routes: [
               GoRoute(

@@ -16,21 +16,29 @@ class EventItem extends StatelessWidget {
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                event.title,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              Text(
-                event.description,
-                style: TextStyle(color: Colors.grey[600], fontSize: 12),
-              ),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event.title,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                  maxLines: 2,
+                  softWrap: true,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  event.description,
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  maxLines: 1,
+                  softWrap: true,
+                ),
+              ],
+            ),
           ),
-          const Spacer(),
+
           IconButton(
             icon: const Icon(Icons.visibility_off, size: 20),
             onPressed: onRemove,
