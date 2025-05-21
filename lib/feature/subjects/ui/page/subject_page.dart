@@ -93,7 +93,10 @@ class SubjectPage extends StatelessWidget {
                         const SizedBox(width: 8),
                         IconButton(
                           icon: const Icon(Icons.send, size: 28),
-                          color: Colors.white,
+                          color:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
                           onPressed: () {
                             final content = noteController.text.trim();
                             if (content.isNotEmpty) {
