@@ -1,9 +1,24 @@
-class ScheduleEvent {
+
+import 'package:hive/hive.dart';
+
+part 'schedule_model.g.dart';
+
+@HiveType(typeId: 4)
+class ScheduleEvent extends HiveObject {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   final String title;
+
+  @HiveField(2)
   final String description;
-  final int day; // 1-6 (пн-сб)
-  final int pairNumber; // 1-7
+
+  @HiveField(3)
+  final int day;
+
+  @HiveField(4)
+  final int pairNumber;
 
   ScheduleEvent({
     required this.id,

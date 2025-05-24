@@ -8,6 +8,7 @@ import 'package:kursovaya_notebook/feature/link/data/model/link_data_model.dart'
 import 'package:kursovaya_notebook/feature/note/bloc/note_bloc.dart';
 import 'package:kursovaya_notebook/feature/note/data/model/note_model.dart';
 import 'package:kursovaya_notebook/feature/schedule/bloc/schedule_cubit.dart';
+import 'package:kursovaya_notebook/feature/schedule/data/model/schedule_model.dart';
 import 'package:kursovaya_notebook/feature/subjects/bloc/subject_cubit.dart';
 import 'package:kursovaya_notebook/feature/subjects/data/model/subject_model.dart';
 
@@ -19,13 +20,20 @@ void main() async {
   Hive.registerAdapter(FolderAdapter());
   Hive.registerAdapter(SubjectAdapter());
   Hive.registerAdapter(LinkDataAdapter());
+  Hive.registerAdapter(ScheduleEventAdapter());
 
   final noteBox = await Hive.openBox<Note>('notesBox');
   final folderBox = await Hive.openBox<Folder>('foldersBox');
   final subjectBox = await Hive.openBox<Subject>('subjectsBox');
+  final scheduleBox = await Hive.openBox<ScheduleEvent>('scheduleBox');
 
   runApp(
-    AppWidget(noteBox: noteBox, subjectBox: subjectBox, folderBox: folderBox),
+    AppWidget(
+      noteBox: noteBox,
+      subjectBox: subjectBox,
+      folderBox: folderBox,
+      scheduleBox: scheduleBox,
+    ),
   );
 }
 
@@ -35,11 +43,13 @@ class AppWidget extends StatelessWidget {
     required this.noteBox,
     required this.subjectBox,
     required this.folderBox,
+    required this.scheduleBox,
   });
 
   final Box<Note> noteBox;
   final Box<Subject> subjectBox;
   final Box<Folder> folderBox;
+  final Box<ScheduleEvent> scheduleBox;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +57,7 @@ class AppWidget extends StatelessWidget {
       providers: [
         DashboardCubit.provider(folderBox),
         SubjectCubit.provider(subjectBox),
-        ScheduleCubit.provider(),
+        ScheduleCubit.provider(scheduleBox),
         NoteCubit.provider(noteBox),
       ],
       child: MaterialApp.router(
