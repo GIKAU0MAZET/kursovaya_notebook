@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kursovaya_notebook/feature/link/data/model/link_data_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AddLinkButton extends StatefulWidget {
@@ -9,14 +10,13 @@ class AddLinkButton extends StatefulWidget {
 }
 
 class _AddLinkButtonState extends State<AddLinkButton> {
-  final List<_LinkData> _links = [];
+  final List<LinkData> _links = [];
 
-  // Функция добавления ссылки
   Future<void> _addLink(BuildContext context) async {
     final urlController = TextEditingController();
     final nameController = TextEditingController();
 
-    final result = await showDialog<_LinkData>(
+    final result = await showDialog<LinkData>(
       context: context,
       builder:
           (context) => AlertDialog(
@@ -50,7 +50,7 @@ class _AddLinkButtonState extends State<AddLinkButton> {
                   if (Uri.tryParse(url)?.hasAbsolutePath == true) {
                     Navigator.pop(
                       context,
-                      _LinkData(name: name.isNotEmpty ? name : url, url: url),
+                      LinkData(name: name.isNotEmpty ? name : url, url: url),
                     );
                   }
                 },
@@ -67,7 +67,6 @@ class _AddLinkButtonState extends State<AddLinkButton> {
     }
   }
 
-  // Функция для открытия URL
   Future<void> _launchUrl(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
@@ -79,7 +78,6 @@ class _AddLinkButtonState extends State<AddLinkButton> {
     }
   }
 
-  // Функция для удаления ссылки
   void _removeLink(int index) {
     setState(() {
       _links.removeAt(index);
@@ -142,11 +140,4 @@ class _AddLinkButtonState extends State<AddLinkButton> {
       ],
     );
   }
-}
-
-class _LinkData {
-  final String name;
-  final String url;
-
-  _LinkData({required this.name, required this.url});
 }
