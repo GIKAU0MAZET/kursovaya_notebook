@@ -1,10 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:kursovaya_notebook/feature/note/bloc/note_state.dart';
 import 'package:kursovaya_notebook/feature/note/data/model/note_model.dart';
 import 'package:uuid/uuid.dart';
 
 class NoteCubit extends Cubit<NoteState> {
-  NoteCubit() : super(NoteState(notes: []));
+  final Box<Note> noteBox;
+
+  NoteCubit(this.noteBox) : super(NoteState(notes: [])) {
+    loadNotes(); // загружаем при старте
+  }
+
+  void loadNotes() {
+    final notes = noteBox.values.toList();
+    emit(state.copyWith(notes: notes));
+  }
 
   void addNote(String subjectId, String content) {
     final newNote = Note(
@@ -13,33 +23,32 @@ class NoteCubit extends Cubit<NoteState> {
       content: content,
       createdAt: DateTime.now(),
     );
-    emit(state.copyWith(notes: [...state.notes, newNote]));
+
+    noteBox.put(newNote.id, newNote); // сохраняем в Hive
+    loadNotes(); // обновляем состояние
   }
 
   void deleteNote(String noteId) {
-    final updatedNotes =
-        state.notes.where((note) => note.id != noteId).toList();
-    emit(state.copyWith(notes: updatedNotes));
+    noteBox.delete(noteId); // удаляем из Hive
+    loadNotes();
   }
 
   void updateNote(String noteId, String newContent) {
-    final updatedNotes =
-        state.notes.map((note) {
-          if (note.id == noteId) {
-            return Note(
-              id: note.id,
-              subjectId: note.subjectId,
-              content: newContent,
-              createdAt: note.createdAt, // оставим дату создания
-            );
-          }
-          return note;
-        }).toList();
+    final existingNote = noteBox.get(noteId);
+    if (existingNote != null) {
+      final updatedNote = Note(
+        id: existingNote.id,
+        subjectId: existingNote.subjectId,
+        content: newContent,
+        createdAt: existingNote.createdAt,
+      );
 
-    emit(state.copyWith(notes: updatedNotes));
+      noteBox.put(noteId, updatedNote); // обновляем в Hive
+      loadNotes();
+    }
   }
 
-  static BlocProvider<NoteCubit> provider() {
-    return BlocProvider(create: (context) => NoteCubit());
+  static BlocProvider<NoteCubit> provider(Box<Note> noteBox) {
+    return BlocProvider(create: (context) => NoteCubit(noteBox));
   }
 }
