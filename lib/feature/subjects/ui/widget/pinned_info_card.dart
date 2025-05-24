@@ -77,7 +77,11 @@ class PinnedInfoCard extends StatelessWidget {
               },
             ),
             const SizedBox(height: 12),
-            LinksSection(links: subject?.links ?? []),
+            LinksSection(
+              links: subject?.links ?? [],
+              folderId: folderId,
+              subjectId: int.parse(subjectId),
+            ),
           ],
         ),
       ),

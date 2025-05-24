@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kursovaya_notebook/core/router/app_router.dart';
 import 'package:kursovaya_notebook/feature/dashboard/bloc/dashboard_cubit.dart';
 import 'package:kursovaya_notebook/feature/folders/data/model/folder_model.dart';
+import 'package:kursovaya_notebook/feature/link/data/model/link_data_model.dart';
 import 'package:kursovaya_notebook/feature/note/bloc/note_bloc.dart';
 import 'package:kursovaya_notebook/feature/note/data/model/note_model.dart';
 import 'package:kursovaya_notebook/feature/schedule/bloc/schedule_cubit.dart';
@@ -17,6 +18,7 @@ void main() async {
   Hive.registerAdapter(NoteAdapter());
   Hive.registerAdapter(FolderAdapter());
   Hive.registerAdapter(SubjectAdapter());
+  Hive.registerAdapter(LinkDataAdapter());
 
   final noteBox = await Hive.openBox<Note>('notesBox');
   final folderBox = await Hive.openBox<Folder>('foldersBox');

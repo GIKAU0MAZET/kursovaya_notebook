@@ -1,44 +1,35 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'subject_model.dart';
+part of 'link_data_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class SubjectAdapter extends TypeAdapter<Subject> {
+class LinkDataAdapter extends TypeAdapter<LinkData> {
   @override
-  final int typeId = 2;
+  final int typeId = 3;
 
   @override
-  Subject read(BinaryReader reader) {
+  LinkData read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Subject(
-      id: fields[0] as String,
-      name: fields[1] as String,
-      teacher: fields[2] as String?,
-      assessmentType: fields[3] as String?,
-      links: (fields[4] as List).cast<LinkData>(),
+    return LinkData(
+      name: fields[0] as String,
+      url: fields[1] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Subject obj) {
+  void write(BinaryWriter writer, LinkData obj) {
     writer
-      ..writeByte(5)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.teacher)
-      ..writeByte(3)
-      ..write(obj.assessmentType)
-      ..writeByte(4)
-      ..write(obj.links);
+      ..writeByte(0)
+      ..write(obj.name)
+      ..writeByte(1)
+      ..write(obj.url);
   }
 
   @override
@@ -47,7 +38,7 @@ class SubjectAdapter extends TypeAdapter<Subject> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SubjectAdapter &&
+      other is LinkDataAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

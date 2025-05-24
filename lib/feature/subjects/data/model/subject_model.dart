@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:kursovaya_notebook/feature/link/data/model/link_data_model.dart';
 
 part 'subject_model.g.dart';
 
@@ -17,7 +18,7 @@ class Subject extends HiveObject {
   String? assessmentType;
 
   @HiveField(4)
-  List<String> links;
+  List<LinkData> links;
 
   Subject({
     required this.id,
@@ -32,7 +33,7 @@ class Subject extends HiveObject {
     String? name,
     String? teacher,
     String? assessmentType,
-    List<String>? links,
+    List<LinkData>? links,
   }) {
     return Subject(
       id: id ?? this.id,

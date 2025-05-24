@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kursovaya_notebook/feature/link/data/model/link_data_model.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:kursovaya_notebook/feature/subjects/bloc/subject_cubit.dart';
 
-class AddLinkButton extends StatefulWidget {
-  const AddLinkButton({super.key});
+class AddLinkButton extends StatelessWidget {
+  final String folderId;
+  final int subjectId;
 
-  @override
-  State<AddLinkButton> createState() => _AddLinkButtonState();
-}
+  const AddLinkButton({
+    super.key,
+    required this.folderId,
+    required this.subjectId,
+  });
 
-class _AddLinkButtonState extends State<AddLinkButton> {
-  final List<LinkData> _links = [];
-
-  Future<void> _addLink(BuildContext context) async {
+  Future<void> _showAddLinkDialog(BuildContext context) async {
     final urlController = TextEditingController();
     final nameController = TextEditingController();
 
@@ -61,83 +62,23 @@ class _AddLinkButtonState extends State<AddLinkButton> {
     );
 
     if (result != null) {
-      setState(() {
-        _links.add(result);
-      });
-    }
-  }
-
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Не удалось открыть ссылку')),
+      context.read<SubjectCubit>().addLinkToSubject(
+        folderId,
+        subjectId,
+        result,
       );
     }
   }
 
-  void _removeLink(int index) {
-    setState(() {
-      _links.removeAt(index);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Ссылки (слева), они будут автоматически переноситься
-        if (_links.isEmpty)
-          const Text(
-            'Нет добавленных ссылок',
-            style: TextStyle(color: Colors.grey),
-          )
-        else
-          Wrap(
-            spacing: 8.0,
-            runSpacing: 8.0,
-            children:
-                _links.map((link) {
-                  final index = _links.indexOf(link);
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      OutlinedButton.icon(
-                        onPressed: () => _launchUrl(link.url),
-                        icon: const Icon(Icons.link, size: 16),
-                        label: Text(link.name),
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, size: 20),
-                        onPressed: () => _removeLink(index),
-                      ),
-                    ],
-                  );
-                }).toList(),
-          ),
-
-        // Кнопка "Добавить" (справа)
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: OutlinedButton.icon(
-            icon: const Icon(Icons.add, size: 16),
-            label: const Text('Добавить'),
-            onPressed: () => _addLink(context),
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-          ),
-        ),
-      ],
+    return OutlinedButton.icon(
+      icon: const Icon(Icons.add, size: 16),
+      label: const Text('Добавить'),
+      onPressed: () => _showAddLinkDialog(context),
+      style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
     );
   }
 }
